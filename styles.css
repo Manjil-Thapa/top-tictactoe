@@ -1,5 +1,23 @@
+body {
+  height: 100vh;
+  background-color: rgb(95, 159, 198);
+  font-family: 'Open Sans', sans-serif;
+}
+.main-display {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  text-align: center;
+  font-size: 3rem;
+}
 table {
   border-collapse: collapse;
+  width: 600px;
+  height: 600px;
+  background-color: rgb(189, 226, 249);
 }
 td {
   width: 50px;
@@ -8,9 +26,9 @@ td {
   vertical-align: middle;
   font-size: 24px;
   font-weight: bold;
-  border: 1px solid black;
+  border: 2px solid black;
   cursor: pointer;
 }
 td:hover {
-  background-color: lightgray;
+  background-color: rgba(154, 187, 208, 0.779);
 }
