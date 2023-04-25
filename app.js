@@ -13,7 +13,7 @@ const winningCombinations = [
 
 const cells = document.querySelectorAll('.cell');
 let currentPlayer = humanPlayer;
-let gameBoard = Array.from(Array(9).keys());
+let gameBoard = Array.from(Array(9), () => '');
 
 cells.forEach((cell) => {
   cell.addEventListener('click', handleClick, { once: true });
@@ -58,7 +58,7 @@ function checkWin(player) {
 
 function checkTie() {
   return gameBoard.every((cell) => {
-    return cell !== undefined;
+    return cell !== '';
   });
 }
 
@@ -83,10 +83,10 @@ function switchPlayer() {
 
 function aiMove() {
   let availableCells = gameBoard.filter((cell) => {
-    return typeof cell === 'number';
+    return cell === '';
   });
   let randomIndex = Math.floor(Math.random() * availableCells.length);
-  let cellIndex = availableCells[randomIndex];
+  let cellIndex = gameBoard.indexOf(availableCells[randomIndex]);
 
   updateGameBoard(cellIndex, currentPlayer);
   displayGameBoard();
@@ -103,7 +103,7 @@ function aiMove() {
 document.getElementById('restart').addEventListener('click', restartGame);
 
 function restartGame() {
-  gameBoard = Array.from(Array(9).keys());
+  gameBoard = Array.from(Array(9), () => '');
   currentPlayer = humanPlayer;
   cells.forEach((cell) => {
     cell.innerText = '';
