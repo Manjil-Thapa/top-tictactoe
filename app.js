@@ -1,88 +1,115 @@
-let player = 'X';
-const board = [
-  ['', '', ''],
-  ['', '', ''],
-  ['', '', ''],
+const humanPlayer = 'X';
+const aiPlayer = 'O';
+const winningCombinations = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
 ];
 
-function handleClick(row, col) {
-  if (board[row][col] == '') {
-    document.getElementById(`cell${row}${col}`).innerText = player;
-    board[row][col] = player;
-    if (checkWin()) {
-      alert(`${player} wins!`);
-      resetBoard();
-    } else if (checkTie()) {
-      alert('Tie game!');
-      resetBoard();
-    } else {
-      player = player == 'X' ? 'O' : 'X';
+const cells = document.querySelectorAll('.cell');
+let currentPlayer = humanPlayer;
+let gameBoard = Array.from(Array(9).keys());
+
+cells.forEach((cell) => {
+  cell.addEventListener('click', handleClick, { once: true });
+});
+
+function handleClick(event) {
+  const cell = event.target;
+  const cellIndex = cell.id;
+
+  updateGameBoard(cellIndex, currentPlayer);
+  displayGameBoard();
+
+  if (checkWin(currentPlayer)) {
+    endGame(false);
+  } else if (checkTie()) {
+    endGame(true);
+  } else {
+    switchPlayer();
+    if (currentPlayer === aiPlayer) {
+      aiMove();
     }
   }
 }
 
-function checkWin() {
-  for (let i = 0; i < 3; i++) {
-    if (
-      board[i][0] != '' &&
-      board[i][0] == board[i][1] &&
-      board[i][1] == board[i][2]
-    ) {
-      return true;
-    }
-    if (
-      board[0][i] != '' &&
-      board[0][i] == board[1][i] &&
-      board[1][i] == board[2][i]
-    ) {
-      return true;
-    }
-  }
-  if (
-    board[0][0] != '' &&
-    board[0][0] == board[1][1] &&
-    board[1][1] == board[2][2]
-  ) {
-    return true;
-  }
-  if (
-    board[0][2] != '' &&
-    board[0][2] == board[1][1] &&
-    board[1][1] == board[2][0]
-  ) {
-    return true;
-  }
-  return false;
+function updateGameBoard(cellIndex, player) {
+  gameBoard[cellIndex] = player;
+}
+
+function displayGameBoard() {
+  gameBoard.forEach((cell, index) => {
+    document.getElementById(index).innerText = cell;
+  });
+}
+
+function checkWin(player) {
+  return winningCombinations.some((combination) => {
+    return combination.every((index) => {
+      return gameBoard[index] === player;
+    });
+  });
 }
 
 function checkTie() {
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      if (board[i][j] == '') {
-        return false;
-      }
-    }
-  }
-  return true;
+  return gameBoard.every((cell) => {
+    return cell !== undefined;
+  });
 }
 
-function resetBoard() {
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      document.getElementById(`cell${i}${j}`).innerText = '';
-      board[i][j] = '';
-    }
+function endGame(tie) {
+  if (tie) {
+    setMessage('Tie Game!');
+  } else {
+    setMessage(`${currentPlayer} Wins!`);
   }
-  player = 'X';
+  cells.forEach((cell) => {
+    cell.removeEventListener('click', handleClick);
+  });
 }
 
-// attach click event handlers to each cell
-for (let i = 0; i < 3; i++) {
-  for (let j = 0; j < 3; j++) {
-    document
-      .getElementById(`cell${i}${j}`)
-      .addEventListener('click', function () {
-        handleClick(i, j);
-      });
+function setMessage(message) {
+  document.getElementById('message').innerText = message;
+}
+
+function switchPlayer() {
+  currentPlayer = currentPlayer === humanPlayer ? aiPlayer : humanPlayer;
+}
+
+function aiMove() {
+  let availableCells = gameBoard.filter((cell) => {
+    return typeof cell === 'number';
+  });
+  let randomIndex = Math.floor(Math.random() * availableCells.length);
+  let cellIndex = availableCells[randomIndex];
+
+  updateGameBoard(cellIndex, currentPlayer);
+  displayGameBoard();
+
+  if (checkWin(currentPlayer)) {
+    endGame(false);
+  } else if (checkTie()) {
+    endGame(true);
+  } else {
+    switchPlayer();
   }
 }
+
+document.getElementById('restart').addEventListener('click', restartGame);
+
+function restartGame() {
+  gameBoard = Array.from(Array(9).keys());
+  currentPlayer = humanPlayer;
+  cells.forEach((cell) => {
+    cell.innerText = '';
+    cell.addEventListener('click', handleClick, { once: true });
+  });
+  setMessage('');
+}
+
+displayGameBoard();
