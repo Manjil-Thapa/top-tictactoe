@@ -15,7 +15,7 @@ const cells = document.querySelectorAll('.cell');
 let currentPlayer = humanPlayer;
 let gameBoard = Array.from(Array(9), () => '');
 
-cells.forEach((cell) => {
+cells.forEach(cell => {
   cell.addEventListener('click', handleClick, { once: true });
 });
 
@@ -49,15 +49,15 @@ function displayGameBoard() {
 }
 
 function checkWin(player) {
-  return winningCombinations.some((combination) => {
-    return combination.every((index) => {
+  return winningCombinations.some(combination => {
+    return combination.every(index => {
       return gameBoard[index] === player;
     });
   });
 }
 
 function checkTie() {
-  return gameBoard.every((cell) => {
+  return gameBoard.every(cell => {
     return cell !== '';
   });
 }
@@ -68,7 +68,7 @@ function endGame(tie) {
   } else {
     setMessage(`${currentPlayer} Wins!`);
   }
-  cells.forEach((cell) => {
+  cells.forEach(cell => {
     cell.removeEventListener('click', handleClick);
   });
 }
@@ -82,7 +82,7 @@ function switchPlayer() {
 }
 
 function aiMove() {
-  let availableCells = gameBoard.filter((cell) => {
+  let availableCells = gameBoard.filter(cell => {
     return cell === '';
   });
   let randomIndex = Math.floor(Math.random() * availableCells.length);
@@ -105,7 +105,7 @@ document.getElementById('restart').addEventListener('click', restartGame);
 function restartGame() {
   gameBoard = Array.from(Array(9), () => '');
   currentPlayer = humanPlayer;
-  cells.forEach((cell) => {
+  cells.forEach(cell => {
     cell.innerText = '';
     cell.addEventListener('click', handleClick, { once: true });
   });
